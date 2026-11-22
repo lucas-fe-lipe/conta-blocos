@@ -97,7 +97,7 @@
   function mostrarIOS() {
     mostrar(
       "Instalar o Conta Blocos",
-      "No Safari, toque em Compartilhar (quadrado com seta) e depois em “Adicionar à Tela de Início”.",
+      "Toque em Compartilhar (quadrado com seta) e depois em “Adicionar à Tela de Início”.",
       [{ rotulo: "Entendi", principal: true, acao: dispensar }]
     );
   }
