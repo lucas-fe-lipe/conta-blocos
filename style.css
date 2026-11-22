@@ -18,7 +18,7 @@ body {
 #stage {
   position: absolute;
   left: 0; top: 0;
-  width: 1140px; height: 640px;
+  width: 1140px; height: 665px;
   transform-origin: top left;
   user-select: none;
   -webkit-user-select: none;
@@ -133,3 +133,5 @@ body:not(.ligado) #lcd b { background: rgba(0,0,0,.25); }
 @media (orientation: portrait) and (max-width: 700px) {
   #dica-girar { display: block; }
 }
+
+#dica-jogo { left: 140px; top: 630px; width: 900px; font-size: 15px; line-height: 1.25; color: #556; }

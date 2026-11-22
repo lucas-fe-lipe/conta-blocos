@@ -1,7 +1,6 @@
 /* =========================================================================
-   Conta Blocos — versão web (ETAPA 1: visual, botões, LEDs, LCD e blocos)
-   A lógica do jogo (main.py) entra na etapa 2, usando a API exposta em
-   window.CB no final deste arquivo.
+   Conta Blocos — versão web (interface: visual, botões, LEDs, LCD e blocos)
+   A lógica do jogo (main.py) está em jogo.js, que usa a API window.CB.
    ========================================================================= */
 (() => {
   "use strict";
@@ -10,12 +9,12 @@
   const viewport = document.getElementById("viewport");
   let escala = 1;
 
-  /* ---------- Ajuste de escala (o desenho tem 1140 x 640) ---------- */
+  /* ---------- Ajuste de escala (o desenho tem 1140 x 665) ---------- */
   function ajustarEscala() {
     const larg = document.documentElement.clientWidth;
     escala = Math.min(larg / 1140, 1.4);
     stage.style.transform = `scale(${escala})`;
-    viewport.style.height = `${640 * escala}px`;
+    viewport.style.height = `${665 * escala}px`;
   }
   window.addEventListener("resize", ajustarEscala);
   ajustarEscala();
@@ -132,16 +131,12 @@
   const chave = document.getElementById("chave");
   const CB_estado = { ligado: false };
 
-  chave.addEventListener("click", async () => {
+  chave.addEventListener("click", () => {
     CB_estado.ligado = !CB_estado.ligado;
     lcd.ligado = CB_estado.ligado;
     chave.classList.toggle("ligada", CB_estado.ligado);
     document.body.classList.toggle("ligado", CB_estado.ligado);
-    if (CB_estado.ligado) {
-      setDados(0, 0);
-      lcd.print("     Conta", "     Blocos");
-      await tom(1000, 200); // som_ligar()
-    } else {
+    if (!CB_estado.ligado) {
       lcd.limpar();
       setDados(0, 0);
     }
@@ -287,30 +282,4 @@
     leitor: { valor: valorLido, limpar: limparLeitores },
     ligado: () => CB_estado.ligado,
   };
-
-  /* ---------- Demonstração da etapa 1 (será removida na etapa 2) ---------- */
-  let giro = null;
-  window.addEventListener("cb:botao", (ev) => {
-    const { nome, estado } = ev.detail;
-    if (estado === "down") tom(nome === "rolar" ? 300 : 800, nome === "rolar" ? 15 : 100);
-
-    if (nome === "rolar" && estado === "down") {
-      giro = setInterval(() => {
-        setDados(Math.floor(Math.random() * 8), Math.floor(Math.random() * 8));
-        tom(300, 15);
-      }, 70);
-    }
-    if (nome === "rolar" && estado === "up") {
-      clearInterval(giro);
-      setDados(Math.floor(Math.random() * 8), Math.floor(Math.random() * 8));
-    }
-    if (nome === "confirmar" && estado === "down") {
-      const v = valorLido();
-      lcd.print("Leitura:", v === null ? "(sem blocos)" : String(v));
-    }
-    if (nome === "voltar" && estado === "down") {
-      lcd.print("     Conta", "     Blocos");
-      limparLeitores();
-    }
-  });
 })();
