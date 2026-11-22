@@ -135,3 +135,36 @@ body:not(.ligado) #lcd b { background: rgba(0,0,0,.25); }
 }
 
 #dica-jogo { left: 140px; top: 630px; width: 900px; font-size: 15px; line-height: 1.25; color: #556; }
+
+/* ---------- Chave de legendas ---------- */
+#legendas-chave {
+  position: absolute; left: 10px; top: 10px; z-index: 100;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 15px; font-weight: 600; cursor: pointer; user-select: none;
+  background: rgba(255,255,255,.85); padding: 5px 10px 5px 6px; border-radius: 20px;
+  border: 1px solid #c7cfdd;
+}
+#legendas-chave input { position: absolute; opacity: 0; width: 0; height: 0; }
+#legendas-chave .trilho {
+  position: relative; width: 38px; height: 20px; border-radius: 10px;
+  background: #b5bdcc; transition: background .15s;
+}
+#legendas-chave .trilho i {
+  position: absolute; left: 2px; top: 2px; width: 16px; height: 16px;
+  border-radius: 50%; background: #fff; transition: transform .15s;
+}
+#chk-legendas:checked + .trilho { background: #4472c4; }
+#chk-legendas:checked + .trilho i { transform: translateX(18px); }
+#chk-legendas:focus-visible + .trilho { outline: 2px solid #1d2b4f; outline-offset: 2px; }
+
+/* legendas começam escondidas */
+body:not(.legendas) .legenda { display: none; }
+
+/* ---------- Feche a Caixa: blocos somados ---------- */
+#sinal-mais {
+  left: 832px; top: 395px; width: 40px; height: 60px;
+  line-height: 60px; text-align: center; font-size: 60px; font-weight: 800;
+  color: #4472c4; display: none; pointer-events: none;
+}
+body.modo-caixa #sinal-mais { display: block; }
+body.modo-caixa .encaixe span { display: none; }

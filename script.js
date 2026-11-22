@@ -26,31 +26,58 @@
 
   /* ---------- Áudio (equivale a tocar_tom do main.py) ---------- */
   let audioCtx = null;
+  let audioBloqueado = false;
   const buzzerEl = document.getElementById("buzzer");
+  const pausa = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  function tom(freq, ms) {
-    return new Promise((resolve) => {
-      try {
-        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === "suspended") audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const ganho = audioCtx.createGain();
-        osc.type = "square";
-        osc.frequency.value = freq;
-        ganho.gain.value = 0.04;
-        osc.connect(ganho);
-        ganho.connect(audioCtx.destination);
-        osc.start();
-        buzzerEl.classList.add("tocando");
-        setTimeout(() => {
-          osc.stop();
-          buzzerEl.classList.remove("tocando");
-          resolve();
-        }, ms);
-      } catch (err) {
-        setTimeout(resolve, ms);
-      }
-    });
+  // Cria o AudioContext e mantém uma saída silenciosa sempre ativa: sem isso,
+  // alguns navegadores/fones Bluetooth "dormem" e cortam o começo dos sons.
+  async function prepararAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const mudo = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      g.gain.value = 0;
+      mudo.connect(g);
+      g.connect(audioCtx.destination);
+      mudo.start();
+    }
+    if (audioCtx.state === "running") {
+      audioBloqueado = false;
+    } else if (!audioBloqueado) {
+      // não deixa o jogo travar se o navegador não liberar o áudio
+      try { await Promise.race([audioCtx.resume(), pausa(250)]); } catch (err) { /* segue sem áudio */ }
+      if (audioCtx.state !== "running") audioBloqueado = true;
+    } else {
+      audioCtx.resume().catch(() => {});
+    }
+  }
+
+  // Equivale a tocar_tom(freq, ms) do main.py
+  async function tom(freq, ms) {
+    try {
+      await prepararAudio();
+      const dur = ms / 1000;
+      const t = audioCtx.currentTime;
+      const rampa = Math.min(0.005, dur / 3);
+      const osc = audioCtx.createOscillator();
+      const ganho = audioCtx.createGain();
+      osc.type = "square";
+      osc.frequency.value = freq;
+      ganho.gain.setValueAtTime(0, t);
+      ganho.gain.linearRampToValueAtTime(0.04, t + rampa);
+      ganho.gain.setValueAtTime(0.04, t + dur - rampa);
+      ganho.gain.linearRampToValueAtTime(0, t + dur);
+      osc.connect(ganho);
+      ganho.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.02);
+      buzzerEl.classList.add("tocando");
+      await pausa(ms);
+      buzzerEl.classList.remove("tocando");
+    } catch (err) {
+      await pausa(ms);
+    }
   }
 
   /* ---------- LCD 16x2 ---------- */
@@ -126,6 +153,11 @@
     mostrarDado(1, d2);
   }
   setDados(0, 0);
+
+  /* ---------- Chave de legendas ---------- */
+  document.getElementById("chk-legendas").addEventListener("change", (e) => {
+    document.body.classList.toggle("legendas", e.target.checked);
+  });
 
   /* ---------- Liga/Desliga ---------- */
   const chave = document.getElementById("chave");
@@ -218,6 +250,15 @@
     colocar(b, cx - TAM_LEITOR / 2, 380, TAM_LEITOR);
   }
 
+  // No Feche a Caixa os dois blocos são somados (5 + 4), e não dezena/unidade
+  let modoSoma = false;
+  function textoLeitura() {
+    const a = encaixes[0], b = encaixes[1];
+    if (!a && !b) return "—";
+    if (modoSoma) return a && b ? `${a.numero} + ${b.numero}` : String((a || b).numero);
+    return String(valorLido());
+  }
+
   // Valor lido: dezena (esquerda) * 10 + unidade (direita); null se vazio
   function valorLido() {
     if (!encaixes[0] && !encaixes[1]) return null;
@@ -226,7 +267,7 @@
 
   function atualizarLeitura() {
     const v = valorLido();
-    leituraEl.textContent = "Leitura: " + (v === null ? "—" : v);
+    leituraEl.textContent = "Leitura: " + textoLeitura();
     window.dispatchEvent(new CustomEvent("cb:leitura", { detail: v }));
   }
 
@@ -279,7 +320,11 @@
     setDados,                  // setDados(d1, d2) -> LEDs dos dois dados (0 a 7)
     tom,                       // await tom(freq, ms)
     botoes,                    // botoes.rolar === true enquanto pressionado
-    leitor: { valor: valorLido, limpar: limparLeitores },
+    leitor: {
+      valor: valorLido,
+      limpar: limparLeitores,
+      modoSoma: (on) => { modoSoma = !!on; atualizarLeitura(); },
+    },
     ligado: () => CB_estado.ligado,
   };
 })();

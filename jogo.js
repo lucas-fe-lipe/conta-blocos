@@ -154,8 +154,17 @@
     return `${valInicial} ${operacao} ${valSecundaria} = ${v === null ? "" : v}`;
   }
 
+  // Feche a Caixa: mostra o "+" entre os leitores e soma os blocos na leitura
+  function atualizarVisualCaixa() {
+    const on = nivel === "3" && modo === "CAIXA" &&
+      (estado === "ROLE" || estado === "RESPONDA" || estado === "CONFIRMAR_SAIDA");
+    document.body.classList.toggle("modo-caixa", on);
+    CB.leitor.modoSoma(on);
+  }
+
   function mostrarTelaQuestao() {
-    dica("Arraste os blocos para os leitores e clique em Confirmar.");
+    if (nivel === "3" && modo === "CAIXA") dica("Coloque 1 ou 2 blocos nos leitores (eles são somados) e clique em Confirmar.");
+    else dica("Arraste os blocos para os leitores e clique em Confirmar.");
     if (nivel === "3" && modo === "CAIXA") printLcd(`${dado1} + ${dado2} = `, formatarCaixa(caixaDisp));
     else printLcd(linhaPergunta(null));
     previewAtivo = true;
@@ -320,6 +329,7 @@
     printLcd(mensagem, "Selecionado!");
     nivel = novoNivel;
     estado = "ROLE";
+    atualizarVisualCaixa();
     await somConfirmar();
     await dormir(1000);
   }
@@ -614,6 +624,8 @@
     else if (estado === "FIM") {
       if (c.confirmar || c.rolar) estado = "INICIO";
     }
+
+    atualizarVisualCaixa();
   }
 
   /* ------------------------------------------------------------------
@@ -636,6 +648,7 @@
     resetarEstado();
     limparLeitores();
     CB.setDados(0, 0);
+    atualizarVisualCaixa();
     dica("");
     if (e.detail) executar();
   });

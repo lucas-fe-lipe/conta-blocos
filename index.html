@@ -10,6 +10,11 @@
   <p id="dica-girar">Gire o celular para a horizontal para jogar.</p>
 
   <div id="viewport">
+    <label id="legendas-chave">
+      <input type="checkbox" id="chk-legendas">
+      <span class="trilho"><i></i></span>
+      <span>Legendas</span>
+    </label>
     <div id="stage">
 
       <!-- Cabo entre o aparelho e os leitores -->
@@ -18,12 +23,12 @@
               fill="none" stroke="#333" stroke-width="22"/>
       </svg>
 
-      <span class="rotulo" style="left:140px;top:55px">Display LCD 16x2</span>
-      <span class="rotulo" style="left:555px;top:231px">Buzzer</span>
-      <span class="rotulo" style="left:36px;top:341px">14 Leds</span>
-      <span class="rotulo" style="left:25px;top:163px"><b>Lig/Des</b></span>
-      <span class="rotulo centro" style="left:770px;top:309px;width:170px">20 Blocos com<br>Tag NFC</span>
-      <span class="rotulo centro" style="left:652px;top:565px;width:400px">2 Leitores NFC</span>
+      <span class="rotulo legenda" style="left:140px;top:55px">Display LCD 16x2</span>
+      <span class="rotulo legenda" style="left:555px;top:231px">Buzzer</span>
+      <span class="rotulo legenda" style="left:36px;top:341px">14 Leds</span>
+      <span class="rotulo legenda" style="left:25px;top:163px"><b>Lig/Des</b></span>
+      <span class="rotulo legenda centro" style="left:770px;top:309px;width:170px">20 Blocos com<br>Tag NFC</span>
+      <span class="rotulo legenda centro" style="left:652px;top:565px;width:400px">2 Leitores NFC</span>
 
       <!-- Corpo do aparelho -->
       <div id="aparelho"></div>
@@ -57,14 +62,15 @@
       <button class="btn" id="btn-confirmar" style="left:411px;top:468px" aria-label="Confirmar">
         <svg viewBox="0 0 60 60"><polyline points="14,31 26,43 47,18" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      <span class="rotulo centro" style="left:184px;top:561px;width:110px"><b>Voltar</b></span>
-      <span class="rotulo centro" style="left:282px;top:561px;width:110px"><b>Rolar<br>dados</b></span>
-      <span class="rotulo centro" style="left:381px;top:561px;width:110px"><b>Confirmar</b></span>
+      <span class="rotulo legenda centro" style="left:184px;top:561px;width:110px"><b>Voltar</b></span>
+      <span class="rotulo legenda centro" style="left:282px;top:561px;width:110px"><b>Rolar<br>dados</b></span>
+      <span class="rotulo legenda centro" style="left:381px;top:561px;width:110px"><b>Confirmar</b></span>
 
       <!-- Leitores NFC -->
       <div class="encaixe" id="encaixe-0" style="left:692px;top:370px"><span>dezena</span></div>
       <div class="encaixe" id="encaixe-1" style="left:892px;top:370px"><span>unidade</span></div>
       <div id="leitor"></div>
+      <span id="sinal-mais">+</span>
       <span id="leitura">Leitura: —</span>
       <span id="dica-jogo"></span>
 
