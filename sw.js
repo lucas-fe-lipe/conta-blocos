@@ -9,6 +9,7 @@ const ARQUIVOS = [
   "style.css",
   "script.js",
   "jogo.js",
+  "instalar.js",
   "manifest.webmanifest",
   "icons/icon-192.png",
   "icons/icon-512.png",

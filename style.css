@@ -175,3 +175,30 @@ body:not(.legendas) .legenda { display: none; }
 }
 body.modo-caixa #sinal-mais { display: block; }
 body.modo-caixa .encaixe span { display: none; }
+
+/* ---------- Convite para instalar o web app ---------- */
+#instalar {
+  position: fixed; z-index: 200;
+  left: 50%; bottom: max(10px, env(safe-area-inset-bottom)); transform: translateX(-50%);
+  width: min(560px, calc(100vw - 20px));
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; background: #fff; color: #111;
+  border: 1px solid #c7cfdd; border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(20,30,60,.28);
+  animation: inst-sobe .25s ease-out;
+}
+#instalar img { width: 44px; height: 44px; border-radius: 10px; flex: none; }
+#instalar .inst-texto { flex: 1; min-width: 0; display: flex; flex-direction: column; font-size: 13px; line-height: 1.25; }
+#instalar .inst-texto b { font-size: 15px; margin-bottom: 2px; }
+#instalar .inst-acoes { display: flex; flex-direction: column; gap: 6px; flex: none; }
+#instalar button {
+  font: 600 14px "Segoe UI", Roboto, Arial, sans-serif; padding: 7px 14px;
+  border-radius: 8px; border: 1px solid #c7cfdd; background: #f1f3f8; color: #223; cursor: pointer;
+}
+#instalar button.inst-principal { background: #2a4480; border-color: #2a4480; color: #fff; }
+@keyframes inst-sobe { from { opacity: 0; transform: translate(-50%, 16px); } }
+@media (max-height: 450px) {
+  #instalar { padding: 6px 10px; }
+  #instalar img { width: 36px; height: 36px; }
+  #instalar .inst-acoes { flex-direction: row; }
+}
