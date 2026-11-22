@@ -9,14 +9,25 @@
   const viewport = document.getElementById("viewport");
   let escala = 1;
 
-  /* ---------- Ajuste de escala (o desenho tem 1140 x 665) ---------- */
+  /* ---------- Ajuste de escala ----------
+     Só a área útil do desenho é exibida (X0,Y0,LARG,ALT) e ela é ajustada para
+     caber na largura E na altura da tela, sem precisar rolar. */
+  const X0 = 10, Y0 = 35, LARG = 1060, ALT = 600;
+  const barraEl = document.getElementById("barra");
+  const avisoEl = document.getElementById("dica-girar");
+
   function ajustarEscala() {
     const larg = document.documentElement.clientWidth;
-    escala = Math.min(larg / 1140, 1.4);
-    stage.style.transform = `scale(${escala})`;
-    viewport.style.height = `${665 * escala}px`;
+    const altTela = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const alt = altTela - barraEl.offsetHeight - avisoEl.offsetHeight - 6;
+    escala = Math.max(0.2, Math.min((larg - 8) / LARG, alt / ALT, 1.2));
+    stage.style.transform = `scale(${escala}) translate(${-X0}px, ${-Y0}px)`;
+    viewport.style.width = `${LARG * escala}px`;
+    viewport.style.height = `${ALT * escala}px`;
   }
   window.addEventListener("resize", ajustarEscala);
+  window.addEventListener("orientationchange", () => setTimeout(ajustarEscala, 200));
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", ajustarEscala);
   ajustarEscala();
 
   function posicaoNoPalco(e) {
@@ -328,3 +339,10 @@
     ligado: () => CB_estado.ligado,
   };
 })();
+
+/* ---------- Web app: service worker (funciona offline) ---------- */
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}

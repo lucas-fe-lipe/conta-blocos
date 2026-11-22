@@ -99,6 +99,7 @@
      ------------------------------------------------------------------ */
   const printLcd = (l1, l2 = "") => lcd.print(l1, l2);
   const atualizarLinha1 = (t) => lcd.linha1(t);
+  const TEXTO_DESLIGADO = "Clique na chave à esquerda do aparelho para ligar.";
   const dica = (t) => { dicaEl.textContent = t; };
 
   function formatarLinhaRole() {
@@ -649,7 +650,7 @@
     limparLeitores();
     CB.setDados(0, 0);
     atualizarVisualCaixa();
-    dica("");
+    dica(e.detail ? "" : TEXTO_DESLIGADO);
     if (e.detail) executar();
   });
 

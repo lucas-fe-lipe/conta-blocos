@@ -2,19 +2,30 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2a4480">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Conta Blocos">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Conta Blocos</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <p id="dica-girar">Gire o celular para a horizontal para jogar.</p>
 
-  <div id="viewport">
+  <header id="barra">
     <label id="legendas-chave">
       <input type="checkbox" id="chk-legendas">
       <span class="trilho"><i></i></span>
       <span>Legendas</span>
     </label>
+    <span id="dica-jogo">Clique na chave à esquerda do aparelho para ligar.</span>
+  </header>
+
+  <div id="viewport">
     <div id="stage">
 
       <!-- Cabo entre o aparelho e os leitores -->
@@ -35,7 +46,7 @@
 
       <!-- Chave Lig/Des -->
       <button id="chave" aria-label="Ligar/Desligar" title="Ligar/Desligar"><i></i></button>
-      <span id="dica-ligar">Clique aqui para ligar</span>
+      <span id="dica-ligar">Clique para ligar</span>
 
       <!-- Display LCD -->
       <div id="lcd-moldura"><div id="lcd"></div></div>
@@ -72,7 +83,6 @@
       <div id="leitor"></div>
       <span id="sinal-mais">+</span>
       <span id="leitura">Leitura: —</span>
-      <span id="dica-jogo"></span>
 
       <!-- Os 20 blocos são criados pelo script.js -->
     </div>

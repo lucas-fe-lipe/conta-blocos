@@ -1,6 +1,6 @@
 * { box-sizing: border-box; }
 
-html, body { margin: 0; padding: 0; }
+html, body { margin: 0; padding: 0; height: 100%; }
 
 body {
   background-color: #f7f8fa;
@@ -8,17 +8,17 @@ body {
     to bottom, transparent 0, transparent 45px, #dfe5f0 45px, #dfe5f0 46px);
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
   color: #111;
-  min-height: 100vh;
-  overflow-x: hidden;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
-#viewport { width: 100%; position: relative; }
+#viewport { margin: 0 auto; position: relative; overflow: hidden; }
 
 /* Palco com o tamanho do desenho original (1140 x 640); o script.js ajusta a escala */
 #stage {
   position: absolute;
   left: 0; top: 0;
-  width: 1140px; height: 665px;
+  width: 1140px; height: 640px;
   transform-origin: top left;
   user-select: none;
   -webkit-user-select: none;
@@ -28,7 +28,7 @@ body {
 #stage > * { position: absolute; }
 #cabo { left: 0; top: 0; pointer-events: none; }
 
-.rotulo { font-size: 24px; line-height: 1.15; white-space: nowrap; }
+.rotulo { font-size: 20px; line-height: 1.15; white-space: nowrap; }
 .rotulo.centro { text-align: center; }
 
 /* ---------- Aparelho ---------- */
@@ -49,7 +49,7 @@ body {
 }
 #chave.ligada i { transform: skewY(35deg); }
 #dica-ligar {
-  left: 8px; top: 132px; font-size: 15px; color: #4472c4; font-weight: 600;
+  left: 12px; top: 132px; white-space: nowrap; font-size: 15px; color: #4472c4; font-weight: 600;
   animation: pisca 1.2s infinite;
 }
 body.ligado #dica-ligar { display: none; }
@@ -134,15 +134,22 @@ body:not(.ligado) #lcd b { background: rgba(0,0,0,.25); }
   #dica-girar { display: block; }
 }
 
-#dica-jogo { left: 140px; top: 630px; width: 900px; font-size: 15px; line-height: 1.25; color: #556; }
 
 /* ---------- Chave de legendas ---------- */
+#barra {
+  height: 44px; display: flex; align-items: center; gap: 12px;
+  padding: 0 max(10px, env(safe-area-inset-right)) 0 max(10px, env(safe-area-inset-left));
+}
 #legendas-chave {
-  position: absolute; left: 10px; top: 10px; z-index: 100;
+  position: relative; flex: none;
   display: flex; align-items: center; gap: 8px;
-  font-size: 15px; font-weight: 600; cursor: pointer; user-select: none;
+  font-size: 14px; font-weight: 600; cursor: pointer; user-select: none;
   background: rgba(255,255,255,.85); padding: 5px 10px 5px 6px; border-radius: 20px;
   border: 1px solid #c7cfdd;
+}
+#dica-jogo {
+  flex: 1; min-width: 0; font-size: 14px; line-height: 1.2; color: #334;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 #legendas-chave input { position: absolute; opacity: 0; width: 0; height: 0; }
 #legendas-chave .trilho {
