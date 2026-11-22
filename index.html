@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conta Blocos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="dica-girar">Gire o celular para a horizontal para jogar.</p>
+
+  <div id="viewport">
+    <div id="stage">
+
+      <!-- Cabo entre o aparelho e os leitores -->
+      <svg id="cabo" width="1140" height="640" aria-hidden="true">
+        <path d="M545 283 H590 Q610 283 610 303 V480 Q610 500 630 500 H652"
+              fill="none" stroke="#333" stroke-width="22"/>
+      </svg>
+
+      <span class="rotulo" style="left:140px;top:55px">Display LCD 16x2</span>
+      <span class="rotulo" style="left:555px;top:231px">Buzzer</span>
+      <span class="rotulo" style="left:36px;top:341px">14 Leds</span>
+      <span class="rotulo" style="left:25px;top:163px"><b>Lig/Des</b></span>
+      <span class="rotulo centro" style="left:770px;top:309px;width:170px">20 Blocos com<br>Tag NFC</span>
+      <span class="rotulo centro" style="left:652px;top:565px;width:400px">2 Leitores NFC</span>
+
+      <!-- Corpo do aparelho -->
+      <div id="aparelho"></div>
+
+      <!-- Chave Lig/Des -->
+      <button id="chave" aria-label="Ligar/Desligar" title="Ligar/Desligar"><i></i></button>
+      <span id="dica-ligar">Clique aqui para ligar</span>
+
+      <!-- Display LCD -->
+      <div id="lcd-moldura"><div id="lcd"></div></div>
+
+      <!-- Buzzer -->
+      <svg id="buzzer" width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+        <path d="M4 17h9l11-9v30l-11-9H4z" fill="#111"/>
+        <path class="onda" d="M30 15q6 8 0 16" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+        <path class="onda" d="M35 10q10 13 0 26" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+
+      <!-- LEDs (dois dados) -->
+      <div class="dado" id="dado-1" style="left:155px;top:270px"></div>
+      <div class="dado" id="dado-2" style="left:353px;top:270px"></div>
+
+      <!-- Botões -->
+      <button class="btn" id="btn-voltar" style="left:214px;top:468px" aria-label="Voltar">
+        <svg viewBox="0 0 60 60"><path d="M12 30 L28 15 V24 C44 24 50 32 52 45 C46 37 38 35 28 35 V44 Z" fill="#fff"/></svg>
+      </button>
+      <button class="btn" id="btn-rolar" style="left:312px;top:468px" aria-label="Rolar dados">
+        <svg viewBox="0 0 60 60"><rect x="14" y="14" width="32" height="32" rx="6" fill="#fff" transform="rotate(14 30 30)"/>
+          <g fill="#555"><circle cx="24" cy="24" r="3"/><circle cx="31" cy="31" r="3"/><circle cx="38" cy="38" r="3"/></g></svg>
+      </button>
+      <button class="btn" id="btn-confirmar" style="left:411px;top:468px" aria-label="Confirmar">
+        <svg viewBox="0 0 60 60"><polyline points="14,31 26,43 47,18" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span class="rotulo centro" style="left:184px;top:561px;width:110px"><b>Voltar</b></span>
+      <span class="rotulo centro" style="left:282px;top:561px;width:110px"><b>Rolar<br>dados</b></span>
+      <span class="rotulo centro" style="left:381px;top:561px;width:110px"><b>Confirmar</b></span>
+
+      <!-- Leitores NFC -->
+      <div class="encaixe" id="encaixe-0" style="left:692px;top:370px"><span>dezena</span></div>
+      <div class="encaixe" id="encaixe-1" style="left:892px;top:370px"><span>unidade</span></div>
+      <div id="leitor"></div>
+      <span id="leitura">Leitura: —</span>
+
+      <!-- Os 20 blocos são criados pelo script.js -->
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
