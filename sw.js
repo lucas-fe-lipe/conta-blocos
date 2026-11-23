@@ -2,7 +2,7 @@
    Estratégia "rede primeiro": com internet, sempre busca a versão mais nova;
    sem internet, usa a cópia guardada. Ao publicar uma versão nova, troque o
    número em CACHE (ex.: v2 -> v3) para limpar o cache antigo. */
-const CACHE = "conta-blocos-v1";
+const CACHE = "conta-blocos-v2";
 const ARQUIVOS = [
   "./",
   "index.html",

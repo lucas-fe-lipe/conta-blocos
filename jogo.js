@@ -73,6 +73,15 @@
     }
   }
 
+  async function somVitoriaLonga() {
+    const notas = [
+      [523, 120], [659, 120], [784, 120], [1047, 240], [784, 120], [1047, 120], [1319, 360],
+      [1175, 120], [1319, 120], [1568, 120], [1319, 240], [1568, 120], [1760, 120], [2093, 360],
+      [1760, 150], [1568, 150], [1319, 150], [1568, 150], [2093, 700],
+    ];
+    for (const [f, d] of notas) { await tocarTom(f, d); await dormir(25); }
+  }
+
   /* ------------------------------------------------------------------
      Estado do jogo
      ------------------------------------------------------------------ */
@@ -287,6 +296,32 @@
   }
 
   /* ------------------------------------------------------------------
+     Modo escondido (99 + Confirmar no menu de níveis)
+     Símbolos especiais (× ÷ √ ³ ₅ °) são desenhados como caracteres 5x8 do LCD.
+     ------------------------------------------------------------------ */
+  const TEMPO_QUESTAO_MS = 10000;
+  const QUESTOES_SECRETAS = [
+    ["17+16=", 33],
+    ["86-19=", 67],
+    ["12×7=", 84],
+    ["125÷5=", 25],
+    ["3^4=", 81],
+    ["³√64=", 4],
+    ["log₅625=", 4],
+    ["ln(1)=", 0],
+    ["sen(45°)×√2=", 1],
+    ["[3+7x]'=", 7],
+  ];
+  let segIdx = 0, segInicio = 0;
+
+  function mostrarQuestaoSecreta() {
+    limparLeitores();
+    printLcd(QUESTOES_SECRETAS[segIdx][0], "");
+    lcd.barra(80);
+    segInicio = performance.now();
+  }
+
+  /* ------------------------------------------------------------------
      Menus
      ------------------------------------------------------------------ */
   const TELAS_NIVEIS = {
@@ -351,6 +386,12 @@
         printLcd("Sair do jogo?");
         c.voltar = false;
         c.rolar = false;
+      } else if (estado === "SEGREDO_PRONTO" || estado === "SEGREDO") {
+        limparLeitores();
+        estado = "NIVEIS";
+        ultimoNum = -1;
+        c.voltar = false;
+        c.confirmar = false;
       } else if (["1", "2", "3", "4"].includes(estado)) {
         limparLeitores();
         estado = "NIVEIS";
@@ -398,13 +439,57 @@
         printLcd("Niveis:", TELAS_NIVEIS[n] || TELAS_NIVEIS[0]);
         ultimoNum = n;
       }
-      if (c.confirmar && n >= 1 && n <= 4) {
+      if (c.confirmar && n === 99) {
+        estado = "SEGREDO_PRONTO";
+        dica("Confirmar = começar. Voltar = menu.");
+        printLcd("    Pronto?     ", "");
+        await somConfirmar();
+        limparLeitores();
+      } else if (c.confirmar && n >= 1 && n <= 4) {
         estado = String(n);
         printLcd(`Nivel ${estado}`, "Selecionado!");
         await somConfirmar();
         await dormir(1000);
         limparLeitores();
         ultimoNum = -1;
+      }
+    }
+
+    // --- MODO ESCONDIDO: "Pronto?" ---
+    else if (estado === "SEGREDO_PRONTO") {
+      if (c.confirmar) {
+        segIdx = 0;
+        estado = "SEGREDO";
+        dica("Coloque a resposta nos leitores. Não precisa confirmar!");
+        mostrarQuestaoSecreta();
+      }
+    }
+
+    // --- MODO ESCONDIDO: questões com tempo ---
+    else if (estado === "SEGREDO") {
+      const restante = TEMPO_QUESTAO_MS - (performance.now() - segInicio);
+      const resp = QUESTOES_SECRETAS[segIdx][1];
+      if (valorLeitor() === resp) {
+        lcd.barra(0);
+        await somAcerto();
+        segIdx += 1;
+        if (segIdx >= QUESTOES_SECRETAS.length) {
+          estado = "FIM";
+          dica("Confirmar ou Rolar = jogar de novo. Voltar = menu.");
+          limparLeitores();
+          printLcd("Parabens!!!", "Vc e incrivel!");
+          await somVitoriaLonga();
+        } else {
+          mostrarQuestaoSecreta();
+        }
+      } else if (restante <= 0) {
+        limparLeitores();
+        printLcd("Nao foi dessa", "vez");
+        await somErro();
+        await dormir(2000);
+        estado = "INICIO";
+      } else {
+        lcd.barra((80 * restante) / TEMPO_QUESTAO_MS);
       }
     }
 
@@ -655,5 +740,5 @@
   });
 
   // Auxiliar para testes automáticos
-  CB.dbg = () => ({ estado, nivel, modo, operacao, respostaCerta, questao, acertos, erros, dado1, dado2, caixaDisp: [...caixaDisp] });
+  CB.dbg = () => ({ segIdx, estado, nivel, modo, operacao, respostaCerta, questao, acertos, erros, dado1, dado2, caixaDisp: [...caixaDisp] });
 })();

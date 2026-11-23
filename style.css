@@ -68,12 +68,20 @@ body.ligado #dica-ligar { display: none; }
   transition: background .2s;
 }
 #lcd b {
+  position: relative;
   display: flex; align-items: center; justify-content: center;
   background: rgba(0,0,0,.12);
   font: 700 25px/1 "Courier New", monospace; color: #fff;
 }
 body:not(.ligado) #lcd { background: #26324d; }
 body:not(.ligado) #lcd b { background: rgba(0,0,0,.25); }
+
+#lcd b span { display: flex; align-items: center; justify-content: center; }
+#lcd .glifo { width: 15px; height: 24px; fill: #fff; shape-rendering: crispEdges; }
+/* barra de tempo: última fileira de pixels da 2ª linha (16 células x 5 pixels) */
+#lcd s { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; display: flex; }
+#lcd s i { flex: 1; background: transparent; }
+#lcd s i.on { background: #fff; }
 
 /* ---------- Buzzer ---------- */
 #buzzer { left: 553px; top: 175px; }

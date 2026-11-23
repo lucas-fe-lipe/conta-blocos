@@ -93,18 +93,51 @@
 
   /* ---------- LCD 16x2 ---------- */
   const lcdEl = document.getElementById("lcd");
-  const celulas = [[], []];
+  const celulas = [[], []];   // elemento de texto de cada célula
+  const barraPx = [];         // 80 pixels da última fileira da 2ª linha (16 células x 5)
   for (let linha = 0; linha < 2; linha++) {
     for (let col = 0; col < 16; col++) {
       const c = document.createElement("b");
+      const t = document.createElement("span");
+      c.appendChild(t);
+      if (linha === 1) {
+        const s = document.createElement("s");
+        for (let p = 0; p < 5; p++) { const i = document.createElement("i"); s.appendChild(i); barraPx.push(i); }
+        c.appendChild(s);
+      }
       lcdEl.appendChild(c);
-      celulas[linha].push(c);
+      celulas[linha].push(t);
     }
+  }
+
+  // Caracteres especiais: como na CGRAM do HD44780, cada um é uma matriz 5x8 pixels
+  const GLIFOS = {
+    "×": ["00000", "10001", "01010", "00100", "01010", "10001", "00000", "00000"],
+    "÷": ["00000", "00100", "00000", "11111", "00000", "00100", "00000", "00000"],
+    "√": ["00011", "00010", "00010", "00010", "00010", "10010", "01010", "00110"],
+    "³": ["01100", "00010", "00100", "00010", "01100", "00000", "00000", "00000"],
+    "₅": ["00000", "00000", "00000", "01110", "01000", "01110", "00010", "01110"],
+    "°": ["01100", "10010", "10010", "01100", "00000", "00000", "00000", "00000"],
+  };
+  const svgGlifo = {};
+  for (const [ch, linhas] of Object.entries(GLIFOS)) {
+    let r = "";
+    linhas.forEach((l, y) => { for (let x = 0; x < 5; x++) if (l[x] === "1") r += `<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`; });
+    svgGlifo[ch] = `<svg class="glifo" viewBox="0 0 5 8" aria-hidden="true">${r}</svg>`;
   }
 
   function escreverLinha(linha, texto) {
     const t = String(texto).slice(0, 16).padEnd(16, " ");
-    for (let i = 0; i < 16; i++) celulas[linha][i].textContent = t[i] === " " ? "" : t[i];
+    for (let i = 0; i < 16; i++) {
+      const el = celulas[linha][i], ch = t[i];
+      if (svgGlifo[ch]) el.innerHTML = svgGlifo[ch];
+      else el.textContent = ch === " " ? "" : ch;
+    }
+  }
+
+  // Última fileira de pixels da 2ª linha: n pixels acesos (0 a 80), da esquerda para a direita
+  function desenharBarra(n) {
+    for (let i = 0; i < barraPx.length; i++) barraPx[i].classList.toggle("on", i < n);
   }
 
   const lcd = {
@@ -114,15 +147,21 @@
       if (!this.ligado) return;
       escreverLinha(0, l1);
       escreverLinha(1, l2);
+      desenharBarra(0);
     },
     // atualizar_linha1_lcd(texto)
     linha1(texto) {
       if (!this.ligado) return;
       escreverLinha(0, texto);
     },
+    barra(n) {
+      if (!this.ligado) return;
+      desenharBarra(Math.max(0, Math.min(80, Math.round(n))));
+    },
     limpar() {
       escreverLinha(0, "");
       escreverLinha(1, "");
+      desenharBarra(0);
     },
   };
 
